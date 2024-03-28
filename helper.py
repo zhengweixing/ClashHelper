@@ -64,7 +64,7 @@ class Site:
         # whitelist keywords
         for node in self.nodes:
             for k in self.inclusion:
-                if k in node['name'].lower() or k in node['server'].lower():
+                if k == "*" or k in node['name'].lower() or k in node['server'].lower():
                     nodes_good.append(node)
                     # site.log("Take: {}".format(node['name']))
                     break
@@ -122,6 +122,7 @@ for site in sites:
     if site.data != None:
         site.purge()
         config['proxies'] += site.nodes
+        config['proxies'] = [dict(t) for t in set([tuple(d.items()) for d in config['proxies']])]
         config['proxy-groups'][list(map(lambda x: x['name'], config['proxy-groups'])).index(site.group)]['proxies'] += site.get_titles()
 
 output_file = sys.argv[2] if len(sys.argv) == 3 else "out.yaml"
